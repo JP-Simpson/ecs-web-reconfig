@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="src/style.css" />
+    <title>ECS</title>
+    <style></style>
+  </head>
+  <body>
+    <header class="header">
+      <h1>Extended Continental Shelf</h1>
+    </header>
+
+    <section class="landing-section">
+      <video class="landing-video" autoplay muted loop>
+        <source src="/stockbackground.mp4" type="video/mp4" />
+        <!-- Fallback for browsers that don't support video -->
+        Your browser does not support the video tag.
+      </video>
+      <div class="landing-overlay"></div>
+      <div class="landing-content">
+        <h2>The Continental Shelf Recommendations Project</h2>
+        <p>
+          Explore an accessible record of recommendations made by the Commission
+          on the Limits of the Continental Shelf.
+        </p>
+      </div>
+      <div class="scroll-indicator" id="scrollIndicator">
+        <span>Scroll to explore the map</span>
+        <div class="scroll-arrow"></div>
+      </div>
+    </section>
+
+    <section class="search-section" id="searchSection">
+      <div class="search-container">
+        <input
+          type="text"
+          class="search-input"
+          placeholder="Search for a claim..."
+          id="searchInput"
+        />
+        <button class="search-button" id="searchButton">Search</button>
+      </div>
+    </section>
+
+    <div class="map-container">
+      <div class="map" id="leafletMap">
+        <!-- Leaflet map will be initialized here -->
+      </div>
+    </div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
