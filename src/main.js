@@ -103,6 +103,16 @@
             return style;
         }
 
+        function styleHitZone(feature) {
+            return {
+                color: "#000000",
+                weight: 15,         // big clickable zone
+                opacity: 0,         // invisible
+                interactive: true
+            };
+        }
+
+
         function styleWorldBoundaries(feature) {
             return {
                 color: 'white',
@@ -170,6 +180,14 @@
             //     where: "LINE_TYPE NOT IN ('Archipelagic baseline', 'Normal baseline (official)', 'Straight baseline')"
             // });
 
+            const ECS_submission_line_buffer = esri.featureLayer({
+                url: ECS_line_url,
+                style: styleHitZone,
+                where: filterCondition,
+                pane: 'paneECS',
+                wrap: true
+            });
+
             const ECS_submission_line = esri.featureLayer({
                 url: ECS_line_url,
                 style: styleECSline,
@@ -189,6 +207,7 @@
 
             // EEZ_boundary_line.addTo(map);
             ECS_submission_line.addTo(map);
+            ECS_submission_line_buffer.addTo(map)
             EEZ_boundary_poly.addTo(map);
             national_boundaries.addTo(map);
 
@@ -263,7 +282,7 @@
 
             // Add popup handlers
             const pdfPrefix = "https://jp-simpson.github.io/ECS-PDFs/pdfs/"
-            ECS_submission_line.on('click', function(e) {
+            ECS_submission_line_buffer.on('click', function(e) {
                 const feature = e.layer.feature;
                 const properties = feature.properties;
                 let popupContent = '<div>';
