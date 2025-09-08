@@ -3,6 +3,7 @@ import { viteStaticCopy } from 'vite-plugin-static-copy'
 import { resolve } from 'path';
 
 export default defineConfig({
+  base: '/ecs-web-reconfig/',
   build: {
     rollupOptions: {
       input: {
