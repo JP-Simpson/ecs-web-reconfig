@@ -9,7 +9,15 @@
   </head>
   <body>
     <header class="header">
-      <h1>Extended Continental Shelf</h1>
+      <div class="header-left">
+        <h1>Extended Continental Shelf</h1>
+      </div>
+      <div class="header-right">
+        <ul>
+          <li><a href="/stats.html">ECS Stats</a></li>
+          <li><a href="/about.html">About this page</a></li>
+        </ul>
+      </div>
     </header>
 
     <section class="landing-section">
@@ -45,10 +53,16 @@
     </section>
 
     <div class="map-container">
-      <div class="map" id="leafletMap">
-        <!-- Leaflet map will be initialized here -->
-      </div>
+      <div class="map" id="leafletMap"></div>
     </div>
+    <footer class="footer">
+      <div class="footer-left">
+        <p>&copy; 2025 University of Sydney</p>
+      </div>
+      <div class="footer-right">
+        <a href="/disclaimer.html">Disclaimer</a>
+      </div>
+    </footer>
     <script type="module" src="/src/main.js"></script>
   </body>
 </html>

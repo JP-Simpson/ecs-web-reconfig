@@ -20,60 +20,60 @@
         // Layer styling functions
         function styleEEZpoly(feature) {
             let style = {
-                color: '#000000',
-                weight: 0,
-                opacity: 0,
+                color: '#0d1e7eff',
+                weight: 1.2,
+                opacity: 0.2,
                 fillOpacity: 0.2,
-                fillColor: '#FFFFFF'
+                fillColor: '#0d1e7eff'
             };
 
-            switch (feature.properties.POL_TYPE) {
-                case '200NM':
-                    style.fillColor = '#0000FF';
-                    break;
-                case 'Joint regime':
-                    style.fillColor = '#00FF00';
-                    break;
-                case 'Overlapping claim':
-                    style.fillColor = '#FF0000';
-                    break;
-            }
+            // switch (feature.properties.POL_TYPE) {
+            //     case '200NM':
+            //         style.fillColor = '#0000FF';
+            //         break;
+            //     case 'Joint regime':
+            //         style.fillColor = '#00FF00';
+            //         break;
+            //     case 'Overlapping claim':
+            //         style.fillColor = '#FF0000';
+            //         break;
+            // }
             return style;
         }
 
         function styleEEZline(feature) {
             let style = {
-                color: '#000000',
+                color: '#0d1e7eff',
                 weight: 1.2,
-                opacity: 0.7,
+                opacity: 0.1,
                 fillOpacity: 0,
-                fillColor: '#FFFFFF'
+                fillColor: '#0d1e7eff'
             };
 
-            switch (feature.properties.LINE_TYPE) {
-                case '200 NM':
-                case '12 NM':
-                    style.color = '#ADD8E6';
-                    break;
-                case 'Treaty':
-                case 'Court ruling':
-                    style.color = '#0000FF';
-                    break;
-                case 'Connection line':
-                case 'Median line':
-                    style.color = '#FFFF00';
-                    break;
-                case 'Joint regime':
-                    style.color = '#00FF00';
-                    break;
-                case 'Unilateral claim (undisputed)':
-                case 'Unsettled (land)':
-                case 'Unsettled (maritime)':
-                case 'Unsettled median line (land)':
-                case 'Unsettled median line (maritime)':
-                    style.color = '#FF0000';
-                    break;
-            }
+            // switch (feature.properties.LINE_TYPE) {
+            //     case '200 NM':
+            //     case '12 NM':
+            //         style.color = '#ADD8E6';
+            //         break;
+            //     case 'Treaty':
+            //     case 'Court ruling':
+            //         style.color = '#0000FF';
+            //         break;
+            //     case 'Connection line':
+            //     case 'Median line':
+            //         style.color = '#FFFF00';
+            //         break;
+            //     case 'Joint regime':
+            //         style.color = '#00FF00';
+            //         break;
+            //     case 'Unilateral claim (undisputed)':
+            //     case 'Unsettled (land)':
+            //     case 'Unsettled (maritime)':
+            //     case 'Unsettled median line (land)':
+            //     case 'Unsettled median line (maritime)':
+            //         style.color = '#FF0000';
+            //         break;
+            // }
             return style;
         }
 
@@ -123,52 +123,80 @@
 
             const map = L.map('leafletMap', {
                 zoom: 3,
+                minZoom: 2,
+                maxZoom: 10,
+                maxBounds: [[-90, -200],[90, 200]],
                 center: [22.355, 21.109],
                 layers: [oceanLayer],
                 zoomControl: false,
                 attributionControl: false
             });
 
+            // map.setMaxBounds([
+            //     [-90, -200],
+            //     [90, 200]
+            // ]);
+
+            // map.setMaxZoom(3);
+
             // Base URLs for your layers
             const base_url = "https://services1.arcgis.com/ZdmoaKLXhx5EdwBs/arcgis/rest/services";
             const EEZ_poly_url = base_url + "/eez_v12_lowres_feature/FeatureServer/0";
-            const EEZ_line_url = base_url + "/MarineRegions_EEZ_line/FeatureServer/0";
-            const ECS_line_url = base_url + "/ECS_Submissions_Line/FeatureServer/0";
+            // const EEZ_line_url = base_url + "/MarineRegions_EEZ_line/FeatureServer/0";
+            const ECS_line_url = base_url + "/ECSsubmissions_line_20250908/FeatureServer/1";
             const boundaries_url = base_url + "/WorldAdminBoundaries/FeatureServer/0";
+
+            // Create panes
+            map.createPane('paneBoundaries');
+            map.getPane('paneBoundaries').style.zIndex = 400;
+
+            map.createPane('paneEEZ');
+            map.getPane('paneEEZ').style.zIndex = 450;
+
+            map.createPane('paneECS');
+            map.getPane('paneECS').style.zIndex = 500;
 
             // Create feature layers
             const EEZ_boundary_poly = esri.featureLayer({
                 url: EEZ_poly_url,
-                style: styleEEZpoly
+                style: styleEEZpoly,
+                pane: 'paneEEZ',
+                wrap: true
             });
 
-            const EEZ_boundary_line = esri.featureLayer({
-                url: EEZ_line_url,
-                style: styleEEZline,
-                where: "LINE_TYPE NOT IN ('Archipelagic baseline', 'Normal baseline (official)', 'Straight baseline')"
-            });
+            // const EEZ_boundary_line = esri.featureLayer({
+            //     url: EEZ_line_url,
+            //     style: styleEEZline,
+            //     where: "LINE_TYPE NOT IN ('Archipelagic baseline', 'Normal baseline (official)', 'Straight baseline')"
+            // });
 
             const ECS_submission_line = esri.featureLayer({
                 url: ECS_line_url,
                 style: styleECSline,
-                where: filterCondition
+                where: filterCondition,
+                pane: 'paneECS',
+                wrap: true
             });
 
             const national_boundaries = esri.featureLayer({
                 url: boundaries_url,
-                style: styleWorldBoundaries
+                style: styleWorldBoundaries,
+                pane: 'paneBoundaries',
+                wrap: true
             });
 
             // Add layers to map
-            EEZ_boundary_poly.addTo(map);
-            EEZ_boundary_line.addTo(map);
+
+            // EEZ_boundary_line.addTo(map);
             ECS_submission_line.addTo(map);
+            EEZ_boundary_poly.addTo(map);
             national_boundaries.addTo(map);
 
             // Add controls
             const zoomControl = L.control.zoom({
                 position: "bottomright"
-            }).addTo(map);
+            });
+            map.addControl(zoomControl);
 
             const attributionControl = L.control({
                 position: "bottomright"
@@ -188,7 +216,7 @@
 
             const overlays = {
                 "EEZ Boundaries": EEZ_boundary_poly,
-                "EEZ Lines": EEZ_boundary_line,
+                // "EEZ Lines": EEZ_boundary_line,
                 "ECS Submission Lines": ECS_submission_line
             };
 
@@ -221,19 +249,35 @@
                 div.innerHTML += '<i style="background: #FF0000; width: 18px; height: 18px; display: inline-block; margin-right: 8px;"></i><span>Contested/unilateral</span><br>';
                 return div;
             };
-            legendEEZ.addTo(map);
+            // legendEEZ.addTo(map);
+
+            function formatDate(timestamp) {
+                if (!timestamp) return "Unknown";
+                const d = new Date(timestamp); // AGOL dates are ms since epoch
+                return d.toLocaleDateString(undefined, { 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric' 
+                });
+            }
 
             // Add popup handlers
+            const pdfPrefix = "https://jp-simpson.github.io/ECS-PDFs/pdfs/"
             ECS_submission_line.on('click', function(e) {
                 const feature = e.layer.feature;
                 const properties = feature.properties;
                 let popupContent = '<div>';
                 popupContent += '<h3><strong>' + properties.State + '</strong></h3>';
+                popupContent += '<p>Date submitted: ' + formatDate(properties.SubmissionDate) + '</p>';
                 popupContent += '<p>Status: ' + properties.Status + '</p>';
                 if (properties.Link) {
-                    popupContent += '<p>View submission: <a href="' + properties.Link + '" target="_blank">Click Here</a></p>';
+                    popupContent += '<p>View original submission: <a href="' + properties.Link + '" target="_blank">Click Here</a></p>';
+                }
+                if (properties.Rec_pdf) {
+                    popupContent += '<p>View commentary on this submission: <a href="' + pdfPrefix + properties.Rec_pdf + '" target="_blank">Click Here</a></p>';
                 }
                 popupContent += '</div>';
+                console.log(properties)
 
                 L.popup()
                     .setLatLng(e.latlng)
@@ -282,15 +326,10 @@
             
             if (scrollIndicator && searchSection) {
                 scrollIndicator.addEventListener('click', function() {
-                    const navbarHeight = getComputedStyle(document.documentElement).getPropertyValue('--navbar-height');
-                    const offset = parseInt(navbarHeight) || 80;
                     
-                    window.scrollTo({
-                        top: searchSection.offsetTop - offset,
-                        behavior: 'smooth'
+                    document.getElementById('searchSection').scrollIntoView({behavior: 'smooth'});
                     });
-                });
-            }
+                };
 
             // Add search functionality placeholder
             const searchButton = document.getElementById('searchButton');
@@ -311,10 +350,6 @@
                     }
                 });
             }
-        });
-        // Jump scroll functionality
-        document.getElementById('scrollIndicator').addEventListener('click', function() {
-            document.getElementById('searchSection').scrollIntoView({behavior: 'smooth'});
         });
 
         // Auto-jump on wheel/scroll
