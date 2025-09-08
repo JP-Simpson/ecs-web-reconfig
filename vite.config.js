@@ -1,7 +1,18 @@
 import { defineConfig } from 'vite'
 import { viteStaticCopy } from 'vite-plugin-static-copy'
+import { resolve } from 'path';
 
 export default defineConfig({
+  build: {
+    rollupOptions: {
+      input: {
+        main: resolve(__dirname, 'index.html'),
+        about: resolve(__dirname, 'pages/about.html'),
+        disclaimer: resolve(__dirname, 'pages/disclaimer.html'),
+        stats: resolve(__dirname, 'pages/stats.html')
+      }
+    }
+  },
   plugins: [
     viteStaticCopy({
       targets: [
